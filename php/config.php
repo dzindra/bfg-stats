@@ -75,6 +75,9 @@ function output(array $data, $debug = false) {
 		echo "</pre>";
 	} else {
 		@header("Content-Type: text/json");
+		@header('Expires: Fri, 01 Jan 2010 00:00:00 GMT');
+		@header('Cache-Control: no-cache, must-revalidate, post-check=0, pre-check=0');
+		
 		echo json_encode($data);
 	}
 }

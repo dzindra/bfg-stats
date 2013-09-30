@@ -156,7 +156,7 @@ app.controller('MenuCtrl', ['$scope', '$location', function ($scope, $location) 
 app.controller('StatsCtrl', ['$scope', '$http', 'RefreshService', function ($scope, $http, RefreshService) {
 
     RefreshService.refreshFunc(function (deferred) {
-        var g = $http.get('php/stats.php');
+        var g = $http.post('php/stats.php', {cache: false});
         g.success(function (data) {
             if (data.status == 1) {
                 $scope.devices = data.devices;
