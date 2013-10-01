@@ -11,7 +11,7 @@ Simple stats parsing from bfgminer rpc API. Uses PHP for reading from miner API 
 ## How to install
 
 * Download or clone repository into directory accessible from the web server
-* Edit config.php and customize your miner address and port
+* Edit php/config.php and customize your miner address and port
 * Point your browser to index.html
 
 ## License
