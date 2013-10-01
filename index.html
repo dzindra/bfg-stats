@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en" ng-app='app'>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0">
+
+    <title>bfg-stats</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <style>
+        .progress-bar {
+            width: 100%;
+        }
+
+        .navbar {
+            margin-bottom: 0;
+        }
+
+        .progress-container {
+            min-height: 20px;
+            height: 20px;
+        }
+
+        .footer {
+            font-size: 80%;
+        }
+    </style>
+
+    <script src="js/angular.1.0.8.min.js"></script>
+    <script src="js/angular-cookies.1.0.8.min.js"></script>
+    <script src="js/app.js"></script>
+</head>
+
+<body ng-controller="MainCtrl">
+
+<nav class="navbar navbar-default navbar-static-top navbar-inverse" role="navigation" ng-controller="MenuCtrl">
+    <div class="navbar-header">
+        <a class="navbar-brand" href="#">bfg-stats</a>
+        <ul class="nav navbar-nav">
+            <li ng-class="isMenuActive('/stats')"><a href="#/stats">Statistics</a></li>
+            <li ng-class="isMenuActive('/settings')"><a href="#/settings">Settings</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="progress-container">
+    <div class="progress progress-striped active" ng-show="working">
+        <div class="progress-bar progress-bar-info" role="progressbar">
+        </div>
+    </div>
+</div>
+
+<div class="container" ng-view></div>
+
+<hr/>
+
+<footer class="container text-center">
+    <p>&copy; 2013 dzindra | Donate: 14ABuhZP7UnZQjwtyWrL19DUiof2jw5ykt</p>
+    <p><a href="https://github.com/dzindra/bfg-stats">Source on GitHub</a> | <a href="http://www.apache.org/licenses/LICENSE-2.0">Licensed under the Apache License, Version 2.0</a></p>
+</footer>
+
+</body>
+</html>

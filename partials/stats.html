@@ -1,0 +1,77 @@
+<div class="alert alert-danger" ng-show='error'><strong>Error!</strong> {{error}}</div>
+
+<h2>Devices</h2>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Device</th>
+        <th>Status</th>
+        <th>MH/S (avg)</th>
+        <th>MH/S (5 sec)</th>
+        <th>Last share time</th>
+        <th>Utility</th>
+        <th>Accepted</th>
+        <th>Rejected</th>
+        <th>HW errors</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr ng-repeat="device in devices">
+        <td>{{device.name}} {{device.id}}</td>
+        <td>{{device.status}}</td>
+        <td>{{device.mhsAvg}}</td>
+        <td>{{device.mhs5s}}</td>
+        <td>{{device.lastShareTime*1000 | date:'H:mm:ss d.M.'}}</td>
+        <td>{{device.utility}}</td>
+        <td>{{device.accepted}}</td>
+        <td>{{device.rejectedPct}}% ({{device.rejected}})</td>
+        <td>{{device.hwErrorsPct}}% ({{device.hwErrors}})</td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>Pools</h2>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Pool URL</th>
+        <th>Status</th>
+        <th>Priority</th>
+        <th>User</th>
+        <th>Last Share Time</th>
+        <th>Accepted</th>
+        <th>Rejected</th>
+        <th>Stale</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr ng-repeat="pool in pools">
+        <td>{{pool.url}}</td>
+        <td>{{pool.status}}</td>
+        <td>{{pool.priority}}</td>
+        <td>{{pool.userName}}</td>
+        <td>{{pool.lastShareTime*1000 | date:'H:mm:ss d.M.'}}</td>
+        <td>{{pool.accepted}}</td>
+        <td>{{pool.rejectedPct}}% ({{pool.rejected}})</td>
+        <td>{{pool.stalePct}}% ({{pool.stale}})</td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="btn-group">
+    <button type="button" class="btn btn-default" ng-class="isRefreshActive(-1)" ng-click="setRefresh(-1)">
+        Autorefresh off
+    </button>
+    <button type="button" class="btn btn-default" ng-class="isRefreshActive(1)" ng-click="setRefresh(1)">1 s
+    </button>
+    <button type="button" class="btn btn-default" ng-class="isRefreshActive(5)" ng-click="setRefresh(5)">5 s
+    </button>
+    <button type="button" class="btn btn-default" ng-class="isRefreshActive(30)" ng-click="setRefresh(30)">30 s
+    </button>
+</div>
+<button type="button" class="btn btn-default" ng-click="doRefresh()">Refresh now</button>
+
+<p class="pull-right" ng-show="lastRefresh">Last refresh <strong>{{lastRefresh|date:'H:mm:ss
+    d.M.yyyy'}}</strong></p>
