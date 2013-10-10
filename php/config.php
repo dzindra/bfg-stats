@@ -82,6 +82,32 @@ function output(array $data, $debug = false) {
 	}
 }
 
+if (isset($_SERVER['CONTENT_TYPE']) && strncasecmp($_SERVER['CONTENT_TYPE'], 'application/json', 16) == 0) {
+	$jsonParams = json_decode(file_get_contents("php://input"), true);
+	if (!$jsonParams) $jsonParams = array();
+} else {
+	$jsonParams = array();
+}
+/**
+ * Returns named parameter from POST or GET (if not found in POST) or default value if no such parameter exists
+ *
+ * @param $name
+ * @param $default
+ * @return string
+ */
+function param($name, $default = false) {
+	global $jsonParams;
+
+	if (isset($jsonParams[$name]))
+		return $jsonParams[$name];
+	else if (isset($_POST[$name]))
+		return $_POST[$name];
+	else if (isset($_GET[$name]))
+		return $_GET[$name];
+	else
+		return $default;
+}
+
 /**
  * Calls supplied callback and provides it with configured RPCMiner class instance.
  * Outputs callback's return array as JSON along with success status.
@@ -93,7 +119,7 @@ function json($callback) {
 	global $config;
 
 	$debug = $config['debug'];
-	if (isset($_REQUEST['debug'])) {
+	if (param('debug')) {
 		$debug = true;
 	}
 
