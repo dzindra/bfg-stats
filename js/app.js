@@ -22,7 +22,7 @@ var app = angular.module('app', ['ngCookies']);
 app.config(['$routeProvider', function ($routeProvider) {
     $routeProvider.
         when('/stats', {templateUrl: 'partials/stats.html', controller: 'StatsCtrl'}).
-        when('/settings', {templateUrl: 'partials/settings.html', controller: 'SettingsCtrl'}).
+        when('/pools', {templateUrl: 'partials/pools.html', controller: 'PoolsCtrl'}).
         otherwise({redirectTo: '/stats'});
 }]);
 
@@ -196,7 +196,73 @@ app.controller('StatsCtrl', ['$scope', '$http', 'RefreshService', function ($sco
 
 }]);
 
-app.controller('SettingsCtrl', ['$scope', function ($scope) {
+app.controller('PoolsCtrl', ['$scope', '$http', '$rootScope', function ($scope, $http, $rootScope) {
+    $scope.pool = {};
+    $scope.pools = [];
+    $scope.buttonsDisabled = false;
 
+    var call = function (params, callback) {
+        if ($scope.buttonsDisabled)
+            return;
+
+        $scope.buttonsDisabled = true;
+        $scope.message = '';
+        $scope.error = '';
+        $rootScope.$broadcast("refreshStarted");
+
+        var r = $http.post('php/pools.php', params, {cache: false});
+        r.success(function (data) {
+            $scope.buttonsDisabled = false;
+            if (data.status == 1) {
+                if (callback) callback(data);
+                $scope.message = data.message;
+                $scope.pools = data.pools;
+                $rootScope.$broadcast('refreshFinished', true, null);
+            } else {
+                $scope.error = data.error;
+                $rootScope.$broadcast('refreshFinished', false, data.error);
+            }
+        });
+        r.error(function (data) {
+            $scope.buttonsDisabled = false;
+            $scope.error = data.error;
+            $rootScope.$broadcast('refreshFinished', false, data.error);
+        });
+    };
+
+    $scope.add = function () {
+        var pool = angular.copy($scope.pool);
+        pool.command = "add";
+
+        call(pool, function () {
+            $scope.pool = {};
+        });
+    };
+
+    $scope.deletePool = function (id) {
+        call({command: "remove", id: id});
+    };
+
+    $scope.topPool = function (id) {
+        call({command: "top", id: id});
+    };
+
+    $scope.enablePool = function (id) {
+        call({command: "enable", id: id});
+    };
+
+    $scope.disablePool = function (id) {
+        call({command: "disable", id: id});
+    };
+
+    $scope.refreshPools = function () {
+        call({command: "list"});
+    };
+
+    $scope.isPoolDisabled = function (pool) {
+        return pool.status == 'Disabled';
+    };
+
+    $scope.refreshPools();
 
 }]);

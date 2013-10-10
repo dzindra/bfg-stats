@@ -1,0 +1,58 @@
+<div class="alert alert-danger" ng-show='error'><strong>Error!</strong> {{error}}</div>
+<div class="alert alert-success" ng-show='message'><strong>Success!</strong> {{message}}</div>
+
+<h2>Add new pool</h2>
+<form class="form-horizontal" name="form">
+    <div class="form-group">
+        <label for="url" class="col-lg-2 control-label">Pool URL</label>
+
+        <div class="col-lg-10">
+            <input type="text" ng-model="pool.url" class="form-control" name="url" id="url" placeholder="Pool URL" required="required"/>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="user" class="col-lg-2 control-label">Miner name</label>
+
+        <div class="col-lg-4"><input type="text" ng-model="pool.user" class="form-control" name="user" id="user" placeholder="Miner name" required="required"/></div>
+
+        <label for="pass" class="col-lg-2 control-label">Miner password</label>
+
+        <div class="col-lg-4"><input type="text" ng-model="pool.pass" class="form-control" name="pass" id="pass" placeholder="Miner password" required="required"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-lg-offset-2 col-lg-10">
+            <button ng-disabled="form.$invalid || buttonsDisabled" ng-click="add()" class="btn btn-primary">Add pool</button>
+        </div>
+    </div>
+</form>
+
+<h2>Manage pools</h2>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Pool URL</th>
+        <th>Status</th>
+        <th>Priority</th>
+        <th>User</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr ng-repeat="pool in pools | orderBy:'priority'">
+        <td>{{pool.url}}</td>
+        <td>{{pool.status}}</td>
+        <td>{{pool.priority}}</td>
+        <td>{{pool.userName}}</td>
+        <td>
+            <button class="btn btn-info" ng-disabled="buttonsDisabled" ng-click="topPool(pool.id)">Use this pool</button>
+            <button class="btn btn-success" ng-disabled="buttonsDisabled" ng-click="enablePool(pool.id)"ng-show="isPoolDisabled(pool)">Enable</button>
+            <button class="btn btn-warning" ng-disabled="buttonsDisabled" ng-click="disablePool(pool.id)" ng-hide="isPoolDisabled(pool)">Disable</button>
+            &nbsp;&nbsp;&nbsp;
+            <button class="btn btn-danger" ng-disabled="buttonsDisabled" ng-click="deletePool(pool.id)">Delete</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
