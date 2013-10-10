@@ -131,6 +131,16 @@ class RPCMiner {
 	}
 
 
+	protected function escape($input) {
+		return strtr($input, array('\\' => '\\\\', ',' => '\,'));
+	}
+
+
+	protected function fetch(array $array, $key, $default) {
+		return isset($array[$key]) ? $array[$key] : $default;
+	}
+
+
 	/**
 	 * Sends command to miner and returns parsed response.
 	 *
@@ -141,16 +151,37 @@ class RPCMiner {
 	 * @throws RPCMinerException if connection to miner fails or malformed response is received
 	 */
 	public function api($command, $params = array()) {
-		if (!is_array($params))
-			$params = array("parameter" => $params);
+		$query = array("command" => $command);
+
+		if (!is_array($params)) {
+			$query["parameter"] = (string)$params;
+		} else if (count($params) > 0) {
+			foreach ($params as &$p)
+				$p = $this->escape($p);
+
+			$query["parameter"] = implode(",", $params);
+		}
 
 		$this->connect();
-		$this->write($params + array("command" => $command));
+		$this->write($query);
 		$data = $this->read();
 		$this->disconnect();
 		return $data;
 	}
 
+
+	public function readStatus($response) {
+		if (isset($response['STATUS'][0]))
+			$status = $response['STATUS'][0];
+		else
+			$status = array('STATUS' => 'E', 'Msg' => 'Missing STATUS response', 'Code' => -6);
+
+		if ($this->fetch($status, 'STATUS', 'E') == 'S')
+			return $this->fetch($status, 'Msg', "Completed successfully.");
+
+
+		throw new RPCMinerException("Invalid status: " . $this->fetch($status, 'STATUS', 'E') . " - " . $this->fetch($status, 'Msg', 'Message missing'), $this->fetch($status, 'Code', -10));
+	}
 
 
 	/**
@@ -195,5 +226,43 @@ class RPCMiner {
 	public function apiVersion($index = 0) {
 		$data = $this->api("version");
 		return isset($data['VERSION'][$index]['API']) ? $data['VERSION'][$index]['API'] : "unknown";
+	}
+
+
+	/**
+	 * adds new pool with specified credentials
+	 *
+	 * @param $url
+	 * @param $user
+	 * @param $pass
+	 * @return string success message
+	 * @throws RPCMinerException
+	 */
+	public function addPool($url, $user, $pass) {
+		$result = $this->api("addpool", array($url, $user, $pass));
+		return $this->readStatus($result);
+	}
+
+
+	public function deletePool($id) {
+		$result = $this->api("removepool", $id);
+		return $this->readStatus($result);
+	}
+
+
+	public function topPool($id) {
+		$result = $this->api("switchpool", $id);
+		return $this->readStatus($result);
+	}
+
+
+	public function enablePool($id, $enable) {
+		$result = $this->api($enable ? "enablepool" : "disablepool", $id);
+		return $this->readStatus($result);
+	}
+
+
+	public function save() {
+		return $this->readStatus($this->api('save'));
 	}
 }
