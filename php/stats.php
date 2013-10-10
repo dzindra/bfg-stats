@@ -58,7 +58,8 @@ function main(RPCMiner $miner) {
 	$poolsConverted = array();
 	foreach ($pools as $pool) {
 		$poolsConverted[] = // add to array
-			convert($pool, array( // converted device info
+			convert($pool, array( // converted pool info
+				'POOL' => 'id',
 				'URL' => 'url',
 				'Status' => 'status',
 				'Priority' => 'priority',
