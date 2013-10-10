@@ -85,14 +85,14 @@ app.service('RefreshService', ['$timeout', '$q', '$rootScope', function ($timeou
                 refreshService.lastRefresh = new Date();
                 refreshService.error = null;
 
-                $rootScope.$broadcast('refreshFinished', true, null, refreshService.lastRefresh);
+                $rootScope.$broadcast('refreshFinished', true, null);
                 refreshService.deferred = null;
                 runTimer();
             }, function (error) {
                 if (error)
                     refreshService.error = error;
 
-                $rootScope.$broadcast('refreshFinished', false, error, refreshService.lastRefresh);
+                $rootScope.$broadcast('refreshFinished', false, error);
                 refreshService.deferred = null;
                 runTimer();
             });
@@ -156,7 +156,7 @@ app.controller('MenuCtrl', ['$scope', '$location', function ($scope, $location) 
 app.controller('StatsCtrl', ['$scope', '$http', 'RefreshService', function ($scope, $http, RefreshService) {
 
     RefreshService.refreshFunc(function (deferred) {
-        var g = $http.post('php/stats.php', {cache: false});
+        var g = $http.post('php/stats.php', {}, {cache: false});
         g.success(function (data) {
             if (data.status == 1) {
                 $scope.devices = data.devices;
@@ -185,9 +185,9 @@ app.controller('StatsCtrl', ['$scope', '$http', 'RefreshService', function ($sco
     $scope.doRefresh = RefreshService.refresh;
     $scope.setRefresh = RefreshService.interval;
 
-    $scope.$on('refreshFinished', function (event, status, error, lastRefresh) {
+    $scope.$on('refreshFinished', function (event, status, error) {
         $scope.error = error;
-        $scope.lastRefresh = lastRefresh;
+        $scope.lastRefresh = RefreshService.lastRefresh();
     });
 
     $scope.$on('$destroy', function () {
