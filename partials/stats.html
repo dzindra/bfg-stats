@@ -47,7 +47,7 @@
     </thead>
 
     <tbody>
-    <tr ng-repeat="pool in pools">
+    <tr ng-repeat="pool in pools | orderBy:'priority'">
         <td>{{pool.url}}</td>
         <td>{{pool.status}}</td>
         <td>{{pool.priority}}</td>
