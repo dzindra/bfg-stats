@@ -123,7 +123,7 @@ class RPCMiner {
 		if ($data === false)
 			throw new RPCMinerException("No data read, connection closed", -4);
 
-		$json = json_decode($data, true);
+		$json = json_decode(trim($data), true);
 		if ($json === null)
 			throw new RPCMinerException("Unable to parse response ($data)", -2);
 
